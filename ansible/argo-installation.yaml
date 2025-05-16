@@ -1,0 +1,27 @@
+---
+- name: Install Argo CD on Kubernetes master
+  hosts: master
+  become: yes
+  tasks:
+    - name: Add Bitnami Helm repository
+      kubernetes.core.helm_repository:
+        name: bitnami
+        repo_url: https://charts.bitnami.com/bitnami
+
+    - name: Install Argo CD via Helm
+      kubernetes.core.helm:
+        name: argocd
+        chart_ref: bitnami/argo-cd
+        release_namespace: argocd
+        create_namespace: true
+        update_repo_cache: true
+
+- name: Apply Argo CD root Application
+  hosts: master
+  become: yes
+  tasks:
+    - name: Apply Argo CD root application manifest
+      kubernetes.core.k8s:
+        state: present
+        namespace: argocd
+        definition: "{{ lookup('file', '../gitops/root-application.yaml') }}"

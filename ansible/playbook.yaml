@@ -1,0 +1,103 @@
+---
+  - name: Install cloud ubuntu image for virtual machines to localhost
+    hosts: localhost
+    connection: local
+    become: true
+    tasks:
+      - name: Ensure image directory exists
+        file:
+          path: /var/lib/libvirt/images
+          state: directory
+          mode: '0755'
+
+      - name: Download Ubuntu cloud image
+        get_url:
+          url: https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img
+          dest: /var/lib/libvirt/images/ubuntu-22.04-server-cloudimg-amd64.img
+          owner: ubuntu
+          group: ubuntu
+          mode: '0644'
+          force: no  
+
+  - name: Prepare KVM Host for Terraform & VM provisioning
+    hosts: provision_host
+    become: true
+    tasks:
+  
+      - name: Update apt cache
+        apt:
+          update_cache: yes
+  
+      - name: Install required packages
+        apt:
+          name:
+            - unzip
+            - qemu-kvm
+            - libvirt-daemon-system
+            - libvirt-clients
+            - virtinst
+            - bridge-utils
+            - cloud-image-utils
+            - libguestfs-tools
+            - genisoimage
+            - python3-libvirt
+            - python3-lxml
+            - python3-pip
+            - dnsmasq-base
+            - net-tools
+          state: latest
+          update-cache: yes
+  
+      - name: Ensure libvirtd service is enabled and running
+        systemd:
+          name: libvirtd
+          enabled: true
+          state: started
+  
+      - name: Add user to libvirt group
+        user:
+          name: "{{ ansible_user }}"
+          groups: libvirt
+          append: yes
+  
+      - name: Enable IP forwarding
+        sysctl:
+          name: net.ipv4.ip_forward
+          value: '1'
+          sysctl_set: yes
+          state: present
+          reload: yes
+  
+      - name: Install Terraform
+        get_url:
+          url: https://releases.hashicorp.com/terraform/1.11.4/terraform_1.11.4_linux_amd64.zip
+          dest: /tmp/terraform.zip
+          mode: '0644'
+  
+      - name: Unzip Terraform binary
+        unarchive:
+          src: /tmp/terraform.zip
+          dest: /usr/local/bin/
+          remote_src: yes
+          mode: '0755'
+
+      - name: Ensure AppArmor utils are installed
+        apt:
+          name: apparmor-utils
+          state: present
+          update_cache: yes
+
+      - name: Disable AppArmor profile for qemu-system-x86_64
+        command: aa-disable /usr/bin/qemu-system-x86_64
+        register: qemu_disable
+        changed_when: "'Already disabled' not in qemu_disable.stdout" 
+
+      - name: Disable AppArmor profile for libvirtd
+        command: aa-disable /usr/sbin/libvirtd
+        register: libvirtd_disable
+        changed_when: "'Already disabled' not in libvirtd_disable.stdout"
+
+      - name: Restart libvirtd after AppArmor profile changes
+        service:
+          name: libvirtd
+          state: restarted
