@@ -3,6 +3,18 @@
   hosts: master
   become: yes
   tasks:
+    - name: Ensure python3-pip and kubernetes module are installed
+      apt:
+        name:
+          - python3-pip
+        state: latest
+        update_cache: yes
+    
+    - name: Install kubernetes Python module
+      pip:
+        name: kubernetes
+        executable: pip3
+
     - name: Add Bitnami Helm repository
       kubernetes.core.helm_repository:
         name: bitnami
@@ -16,10 +28,6 @@
         create_namespace: true
         update_repo_cache: true
 
-- name: Apply Argo CD root Application
-  hosts: master
-  become: yes
-  tasks:
     - name: Apply Argo CD root application manifest
       kubernetes.core.k8s:
         state: present
