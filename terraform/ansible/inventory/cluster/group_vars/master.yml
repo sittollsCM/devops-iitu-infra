@@ -1,2 +1,0 @@
-kubeadm_init_flags: "--pod-network-cidr=192.168.0.0/16 --kubernetes-version=v1.32.5"
-image_dir: "/tmp/k8s-images"
