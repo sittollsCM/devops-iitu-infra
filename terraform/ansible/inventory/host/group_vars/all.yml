@@ -1,0 +1,2 @@
+terraform_version: "1.11.4"
+external_interface: "ens3"

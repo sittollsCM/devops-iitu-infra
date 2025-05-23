@@ -1,0 +1,10 @@
+controller:
+  replicaCount: 1
+  service:
+    type: LoadBalancer
+    ports:
+      http: 80
+      https: 443
+  ingressClassResource:
+    name: nginx
+    default: true

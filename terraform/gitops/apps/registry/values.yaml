@@ -1,0 +1,17 @@
+persistence:
+  enabled: true
+  size: 10Gi
+  accessMode: ReadWriteOnce
+
+storage:
+  filesystem:
+    rootdirectory: /var/lib/registry
+
+service:
+  type: ClusterIP
+  port: 5000
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi

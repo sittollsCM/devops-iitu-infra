@@ -91,25 +91,46 @@
 
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-    - name: 2. Disable swap (temporary)
+    - name: 2. Get list of kubeadm images
+      command: kubeadm config images list
+      register: image_list_raw
+    - name: 3. Create image directory
+      file:
+        path: "{{ image_dir }}"
+        state: directory
+    - name: 4. Save each image as tarball using ctr
+      shell: |
+        ctr -n k8s.io images pull {{ item }}
+        ctr -n k8s.io images export {{ image_dir }}/{{ item | regex_replace('[^a-zA-Z0-9]', '_') }}.tar {{ item }}
+      args:
+        executable: /bin/bash
+      loop: "{{ image_list_raw.stdout_lines }}"
+    - name: 5. Copy tar files to workers
+      synchronize:
+        src: "{{ image_dir }}/"
+        dest: "{{ image_dir }}/"
+        mode: push
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['workers'] }}"
+    - name: Disable swap (temporary)
       command: swapoff -a
-    - name: 3. Initialize the Kubernetes control plane
+    - name: 6. Initialize the Kubernetes control plane
       command: kubeadm init --apiserver-advertise-address={{ ansible_default_ipv4.address }} {{ kubeadm_init_flags }}
       register: kubeadm_init
       args:
         creates: /etc/kubernetes/admin.conf
-    - name: 4. Save kubeconfig for user
+    - name: 7. Save kubeconfig for user
       shell: |
         mkdir -p $HOME/.kube
         cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
         chown $(id -u):$(id -g) $HOME/.kube/config
       when: kubeadm_init is succeeded
-    - name: 5. Export join command to file
+    - name: 8. Export join command to file
       shell: kubeadm token create --print-join-command > /tmp/kubeadm_join.sh
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
       when: kubeadm_init is succeeded
-    - name: 6. Wait for API server to be available
+    - name: 9. Wait for API server to be available
       uri:
         url: https://127.0.0.1:6443/healthz
         method: GET
@@ -122,7 +143,7 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
       when: kubeadm_init is succeeded
-    - name: 7. Install Calico CNI plugin
+    - name: 10. Install Calico CNI plugin
       shell: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
@@ -132,8 +153,13 @@
   serial: 1
   become: true
   tasks:
-    - name: 1. Pull kubeadm images for workers
-      command: kubeadm config images pull
+    - name: 1. Import all preloaded images
+      shell: |
+        for tar in {{ image_dir }}/*.tar; do
+          ctr -n k8s.io images import "$tar"
+        done
+      args:
+        executable: /bin/bash
     - name: 2. Check if node is already joined
       stat:
         path: /etc/kubernetes/kubelet.conf

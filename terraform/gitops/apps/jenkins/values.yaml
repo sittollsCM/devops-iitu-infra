@@ -1,0 +1,34 @@
+controller:
+  adminUser: admin
+  adminPassword: admin123
+  serviceType: NodePort
+  servicePort: 8080
+  nodePort: 30080
+
+  installPlugins:
+    - kubernetes:latest
+    - workflow-aggregator:latest
+    - git:latest
+    - configuration-as-code:latest
+    - blueocean:latest
+    - matrix-auth:latest
+
+  JCasC:
+    enabled: true
+    defaultConfig: true
+    configScripts:
+      welcome-message: |
+        jenkins:
+          systemMessage: "Welcome to DevOps IITU Jenkins!"
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+
+persistence:
+  enabled: true
+  size: 8Gi

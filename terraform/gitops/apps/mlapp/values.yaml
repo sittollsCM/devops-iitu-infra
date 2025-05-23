@@ -1,0 +1,23 @@
+image:
+  repository: registry.registry.svc.cluster.local:5000/mlapp
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: true
+  hostname: ml.local
+  className: nginx
+
+persistence:
+  enabled: true
+  size: 5Gi
+  mountPath: /app/data
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
