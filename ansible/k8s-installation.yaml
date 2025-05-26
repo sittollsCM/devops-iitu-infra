@@ -88,7 +88,6 @@
     - name: 1. Pull kubeadm images
       shell: >
         kubeadm config images pull --image-repository=registry.k8s.io --cri-socket=unix:///run/containerd/containerd.sock
-
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
     - name: 2. Disable swap (temporary)
