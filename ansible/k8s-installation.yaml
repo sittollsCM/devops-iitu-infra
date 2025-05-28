@@ -34,45 +34,47 @@
       copy:
         dest: /etc/containerd/config.toml
         content: |
-          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-            [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-              SystemdCgroup = true
-    - name: 7. Restart containerd
-      systemd:
-        name: containerd
-        state: restarted
-        enabled: true
-    - name: 8. Add Kubernetes GPG key
+          version = 2
+          [plugins]
+            [plugins."io.containerd.grpc.v1.cri"]
+              [plugins."io.containerd.grpc.v1.cri".containerd]
+                [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+                  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+                    runtime_type = "io.containerd.runc.v2"
+                    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+                      SystemdCgroup = true
+      notify: Restart containerd
+    - name: 7. Add Kubernetes GPG key
       shell: |
         curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | \
         gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
       args:
         creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-    - name: 9. Add Kubernetes apt repo
+    - name: 8. Add Kubernetes apt repo
       copy:
         dest: /etc/apt/sources.list.d/kubernetes.list
         content: |
           deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /
-    - name: 10. Install Kubernetes tools
+    - name: 9. Install Kubernetes tools
       apt:
         name:
           - kubelet
           - kubeadm
           - kubectl
         update_cache: yes
-    - name: 11. Hold kube packages to prevent upgrades
+    - name: 10. Hold kube packages to prevent upgrades
       ansible.builtin.shell: |
         echo "{{ item }} hold" | sudo dpkg --set-selections
       loop:
         - kubelet
         - kubeadm
         - kubectl
-    - name: 12. Enable kubelet service
+    - name: 11. Enable kubelet service
       systemd:
         name: kubelet
         enabled: yes
         state: started
-    - name: 13. Create crictl config for containerd
+    - name: 12. Create crictl config for containerd
       copy:
         dest: /etc/crictl.yaml
         content: |
@@ -81,6 +83,13 @@
           timeout: 10
           debug: false
       become: true
+  handlers:
+    - name: Restart containerd
+      systemd:
+        name: containerd
+        state: restarted
+        enabled: true
+
 - name: Initialize Kubernetes master
   hosts: master
   become: true
@@ -90,10 +99,15 @@
         kubeadm config images pull --image-repository=registry.k8s.io --cri-socket=unix:///run/containerd/containerd.sock
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-    - name: 2. Disable swap (temporary)
+    - name: 2.1. Disable swap (temporary)
       command: swapoff -a
+    - name: 2.2. Add kubeconfig template
+      template:
+        src: cluster-init.yaml.j2
+        dest: /etc/kubernetes/cluster-init.yaml
+        mode: 0644
     - name: 3. Initialize the Kubernetes control plane
-      command: kubeadm init --apiserver-advertise-address={{ ansible_default_ipv4.address }} {{ kubeadm_init_flags }}
+      command: kubeadm init --config=/etc/kubernetes/cluster-init.yaml
       register: kubeadm_init
       args:
         creates: /etc/kubernetes/admin.conf
@@ -122,7 +136,7 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
       when: kubeadm_init is succeeded
     - name: 7. Install Calico CNI plugin
-      shell: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
+      shell: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml --kubeconfig=/etc/kubernetes/admin.conf
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
       when: kubeadm_init is succeeded and api_server_status.status == 200
