@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://charts.bitnami.com/bitnami
     chart: grafana
-    targetRevision: latest
+    targetRevision: 12.0.4
     helm:
       valueFiles:
         - values.yaml

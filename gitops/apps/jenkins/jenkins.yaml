@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://charts.bitnami.com/bitnami
     chart: jenkins
-    targetRevision: latest
+    targetRevision: 13.6.7
     helm:
       valueFiles:
         - values.yaml
