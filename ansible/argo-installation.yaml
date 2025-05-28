@@ -26,19 +26,22 @@
       args:
         creates: /usr/local/bin/helm
 
-    - name: Add Bitnami Helm repository
+    - name: Add Argo Helm repository
       kubernetes.core.helm_repository:
-        name: bitnami
-        repo_url: https://charts.bitnami.com/bitnami
+        name: argo
+        repo_url: https://argoproj.github.io/argo-helm
 
     - name: Install Argo CD via Helm
       kubernetes.core.helm:
         name: argocd
-        chart_ref: bitnami/argo-cd
+        chart_ref: argo/argo-cd
         release_namespace: argocd
         create_namespace: true
         update_repo_cache: true
         values:
+          global:
+            admin:
+              password: "$2a$12$KIX8FSLX8rJ/7hH1Hdhi5O5tED35B9BObO1zrNDFSH3X9k.Z6gLzK"  # admin123
           redis:
             architecture: standalone
             master:
