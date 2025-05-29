@@ -68,6 +68,23 @@ data:
         }
       ]
     }
+  helperPod.yaml: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: helper-pod
+    spec:
+      containers:
+      - name: helper
+        image: busybox
+        command: ["sh", "-c", "sleep 3600"]
+        volumeMounts:
+        - name: vol
+          mountPath: /opt
+      volumes:
+      - name: vol
+        hostPath:
+          path: /opt
 ---
 apiVersion: v1
 kind: ServiceAccount
