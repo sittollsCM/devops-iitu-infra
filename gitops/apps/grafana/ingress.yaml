@@ -17,3 +17,4 @@ spec:
                 name: grafana
                 port:
                   number: 81
+  ingressClassName: nginx
