@@ -8,3 +8,5 @@ controller:
   ingressClassResource:
     name: nginx
     default: true
+  admissionWebhooks:
+    enabled: true
