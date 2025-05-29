@@ -61,12 +61,13 @@ metadata:
 data:
   setup: |
     #!/bin/sh
-    set -e
-    mkdir -m 0777 -p ${VOL_DIR}
-    chown nobody:nogroup ${VOL_DIR}
+    set -eu
+    mkdir -p ${VOL_DIR}
+    chmod 777 ${VOL_DIR}
+    chown 65534:65534 ${VOL_DIR} || true
   teardown: |
     #!/bin/sh
-    set -e
+    set -eu
     rm -rf ${VOL_DIR}
   config.json: |
     {
