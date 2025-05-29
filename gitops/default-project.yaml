@@ -13,6 +13,24 @@ spec:
   clusterResourceWhitelist:
     - group: ''
       kind: Namespace
+    - group: ''
+      kind: PersistentVolume
+    - group: ''
+      kind: PersistentVolumeClaim
+    - group: ''
+      kind: Service
+    - group: ''
+      kind: ConfigMap
+    - group: ''
+      kind: Secret
+    - group: ''
+      kind: Pod
+    - group: ''
+      kind: Deployment
+    - group: ''
+      kind: StatefulSet
+    - group: ''
+      kind: ServiceAccount
     - group: rbac.authorization.k8s.io
       kind: ClusterRole
     - group: rbac.authorization.k8s.io
@@ -23,3 +41,4 @@ spec:
       kind: IngressClass
     - group: storage.k8s.io
       kind: StorageClass
+
