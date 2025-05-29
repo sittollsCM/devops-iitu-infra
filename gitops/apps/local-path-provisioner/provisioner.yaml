@@ -59,6 +59,10 @@ metadata:
   name: local-path-config
   namespace: local-path-storage
 data:
+  setup: |
+    #!/bin/sh
+    mkdir -m 0777 -p ${VOL_DIR}
+    chown nobody:nogroup ${VOL_DIR}
   config.json: |
     {
       "nodePathMap":[
