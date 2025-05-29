@@ -21,3 +21,5 @@ spec:
       kind: ValidatingWebhookConfiguration
     - group: networking.k8s.io
       kind: IngressClass
+    - group: storage.k8s.io
+      kind: StorageClass
