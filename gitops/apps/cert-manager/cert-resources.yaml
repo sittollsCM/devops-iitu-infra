@@ -1,0 +1,24 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-cluster-issuer
+spec:
+  selfSigned: {}
+---
+kind: Certificate
+metadata:
+  name: argocd-cert
+  namespace: argocd
+spec:
+  secretName: argocd-tls
+  duration: 8760h
+  renewBefore: 360h
+  commonName: argocd.local
+  dnsNames:
+    - argocd.local
+  issuerRef:
+    name: selfsigned-cluster-issuer
+    kind: ClusterIssuer
+  usages:
+    - server auth
+    - client auth

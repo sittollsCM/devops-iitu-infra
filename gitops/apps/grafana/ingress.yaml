@@ -5,6 +5,7 @@ metadata:
   namespace: monitoring
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
 spec:
   rules:
     - host: grafana.local
@@ -16,5 +17,9 @@ spec:
               service:
                 name: grafana
                 port:
-                  number: 81
+                  number: 80
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - grafana.local
+      secretName: grafana-tls

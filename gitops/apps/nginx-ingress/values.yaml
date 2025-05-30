@@ -4,7 +4,7 @@ controller:
     type: LoadBalancer
     ports:
       http: 80
-      #https: 443
+      https: 443
   ingressClassResource:
     name: nginx
     default: true

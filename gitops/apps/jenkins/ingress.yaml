@@ -5,6 +5,7 @@ metadata:
   namespace: jenkins
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
 spec:
   rules:
     - host: jenkins.local
@@ -16,5 +17,9 @@ spec:
               service:
                 name: jenkins
                 port:
-                  number: 82
+                  number: 80
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - jenkins.local
+      secretName: jenkins-tls
