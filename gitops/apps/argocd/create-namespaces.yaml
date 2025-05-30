@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: jenkins
+  name: argocd
 ---
 apiVersion: v1
 kind: Namespace
@@ -11,9 +11,39 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: argocd
+  name: jenkins
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: local-path-storage
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: cert-manager
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metallb-system
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlapp
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress-nginx
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: postgres
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: registry
