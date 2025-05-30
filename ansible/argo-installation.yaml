@@ -39,9 +39,6 @@
         create_namespace: true
         update_repo_cache: true
         values:
-          global:
-            admin:
-              password: "$2a$12$KIX8FSLX8rJ/7hH1Hdhi5O5tED35B9BObO1zrNDFSH3X9k.Z6gLzK"  # admin123
           redis:
             architecture: standalone
             master:
@@ -52,6 +49,13 @@
               enabled: false
           dex:
             enabled: false
+
+    - name: Wait until Argo CD is ready
+      shell: |
+        kubectl wait --namespace argocd \
+          --for=condition=ready pod \
+          --selector=app.kubernetes.io/name=argocd-server \
+          --timeout=300s
 
     - name: Apply Argo CD default application project (App Project)
       kubernetes.core.k8s:
@@ -70,6 +74,12 @@
         state: present
         namespace: argocd
         definition: "{{ lookup('file', '../gitops/cert-manager/2-cert-manager.yaml') }}"
+    
+    - name: Apply NginX Ingress manifest
+      kubernetes.core.k8s:
+        state: present
+        namespace: argocd
+        definition: "{{ lookup('file', '../gitops/apps/nginx-ingress/nginx-ingress.yaml') }}"
     
     - name: Apply Cert Manager resources manifest (Resources)
       kubernetes.core.k8s:
