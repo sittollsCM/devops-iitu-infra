@@ -59,8 +59,20 @@
         namespace: argocd
         definition: "{{ lookup('file', '../gitops/1-default-project.yaml') }}"
     
+    - name: Apply Cert Manager application manifest (Controller)
+      kubernetes.core.k8s:
+        state: present
+        namespace: argocd
+        definition: "{{ lookup('file', '../gitops/cert-manager/2-cert-manager.yaml') }}"
+    
+    - name: Apply Cert Manager resources manifest (Resources)
+      kubernetes.core.k8s:
+        state: present
+        namespace: argocd
+        definition: "{{ lookup('file', '../gitops/cert-manager/3-cert-manager-resources.yaml') }}"
+    
     - name: Apply Argo CD root application manifest (App of Apps)
       kubernetes.core.k8s:
         state: present
         namespace: argocd
-        definition: "{{ lookup('file', '../gitops/2-root-application.yaml') }}"
+        definition: "{{ lookup('file', '../gitops/4-root-application.yaml') }}"
