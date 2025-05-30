@@ -57,10 +57,10 @@
       kubernetes.core.k8s:
         state: present
         namespace: argocd
-        definition: "{{ lookup('file', '../gitops/default-project.yaml') }}"
+        definition: "{{ lookup('file', '../gitops/1-default-project.yaml') }}"
     
     - name: Apply Argo CD root application manifest (App of Apps)
       kubernetes.core.k8s:
         state: present
         namespace: argocd
-        definition: "{{ lookup('file', '../gitops/root-application.yaml') }}"
+        definition: "{{ lookup('file', '../gitops/2-root-application.yaml') }}"
