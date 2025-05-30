@@ -59,6 +59,12 @@
         namespace: argocd
         definition: "{{ lookup('file', '../gitops/0-default-project.yaml') }}"
     
+    - name: Apply Cert Manager CRD installation manifest (CRDs)
+      kubernetes.core.k8s:
+        state: present
+        namespace: argocd
+        definition: "{{ lookup('file', '../gitops/cert-manager/1-cert-install-crds.yaml') }}"
+    
     - name: Apply Cert Manager application manifest (Controller)
       kubernetes.core.k8s:
         state: present
