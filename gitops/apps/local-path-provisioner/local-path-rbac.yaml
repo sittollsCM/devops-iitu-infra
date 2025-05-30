@@ -4,8 +4,8 @@ metadata:
   name: local-path-provisioner-service-account
   namespace: local-path-storage
 ---
-kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
   namespace: local-path-storage
   name: local-path-provisioner-role
@@ -14,8 +14,8 @@ rules:
     resources: ["configmaps"]
     verbs: ["get", "list", "watch"]
 ---
-kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
 metadata:
   name: local-path-provisioner-binding
   namespace: local-path-storage
