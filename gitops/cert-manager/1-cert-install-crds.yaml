@@ -6,13 +6,17 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/jetstack/cert-manager
-    targetRevision: v1.17.2
-    path: deploy/crds
+    repoURL: https://charts.jetstack.io
+    chart: cert-manager
+    targetRevision: 1.17.2
+    helm:
+      skipCrds: false
+      values: |
+        installCRDs: true
   destination:
     server: https://kubernetes.default.svc
     namespace: cert-manager
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true
