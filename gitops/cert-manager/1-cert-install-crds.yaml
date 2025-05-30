@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/jetstack/cert-manager
-    targetRevision: 1.17.2
+    targetRevision: v1.17.2
     path: deploy/crds
   destination:
     server: https://kubernetes.default.svc
