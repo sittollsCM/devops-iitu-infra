@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jenkins-cert
+  namespace: jenkins
+spec:
+  secretName: jenkins-tls
+  duration: 8760h # 365 days
+  renewBefore: 360h # 15 days before end
+  commonName: jenkins.local
+  dnsNames:
+    - jenkins.local
+  issuerRef:
+    name: selfsigned-cluster-issuer
+    kind: ClusterIssuer
+  usages:
+    - server auth
+    - client auth
