@@ -1,18 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager-resources
+  name: apps-deploy
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "-1"
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR_USER/YOUR_REPO
-    path: gitops/apps/cert-resources
+    repoURL: https://github.com/sittollsCM/devops-iitu-infra
+    targetRevision: HEAD
+    path: gitops/apps
+    directory:
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: default
   syncPolicy:
     automated:
       prune: true

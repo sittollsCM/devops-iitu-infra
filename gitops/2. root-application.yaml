@@ -1,21 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: root-apps
+  name: root-application
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/sittollsCM/devops-iitu-infra'
+    repoURL: https://github.com/sittollsCM/devops-iitu-infra
     targetRevision: HEAD
-    path: gitops/apps
+    path: gitops/setup
     directory:
       recurse: true
   destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: default
+    server: https://kubernetes.default.svc
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
