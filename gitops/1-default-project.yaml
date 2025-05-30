@@ -45,3 +45,5 @@ spec:
       kind: StorageClass
     - group: apiextensions.k8s.io
       kind: CustomResourceDefinition
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
