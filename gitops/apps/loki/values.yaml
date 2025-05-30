@@ -1,8 +1,4 @@
 loki:
-  persistence:
-    enabled: true
-    size: 10Gi
-    
   auth_enabled: false
 
   commonConfig:
@@ -15,10 +11,12 @@ loki:
   ingester:
     replicas: 1
     
-read:
-  replicas: 1
+  read:
+    replicas: 1
 
-write:
-  replicas: 1
+  write:
+    replicas: 1
 
-
+persistence:
+    enabled: true
+    size: 10Gi
