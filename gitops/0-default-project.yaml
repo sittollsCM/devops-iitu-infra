@@ -47,3 +47,5 @@ spec:
       kind: CustomResourceDefinition
     - group: admissionregistration.k8s.io
       kind: MutatingWebhookConfiguration
+    - group: cert-manager.io
+      kind: ClusterIssuer 
