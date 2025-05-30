@@ -5,7 +5,6 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-    argocd.argoproj.io/requeue-after-seconds: "60"
 spec:
   project: default
   source:
