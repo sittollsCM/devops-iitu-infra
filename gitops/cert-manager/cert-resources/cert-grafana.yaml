@@ -4,7 +4,7 @@ metadata:
   name: grafana-cert
   namespace: monitoring
 spec:
-  secretName: argocd-tls
+  secretName: grafana-tls
   duration: 8760h # 365 days
   renewBefore: 360h # 15 days before end
   commonName: grafana.local
