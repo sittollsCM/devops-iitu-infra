@@ -80,6 +80,12 @@
         state: present
         namespace: argocd
         definition: "{{ lookup('file', '../gitops/apps/nginx-ingress/nginx-ingress.yaml') }}"
+        
+    - name: Apply Metal Load Balancer manifest
+      kubernetes.core.k8s:
+        state: present
+        namespace: argocd
+        definition: "{{ lookup('file', '../gitops/apps/metal-load-balancer/metal-load-balancer.yaml') }}"
     
     - name: Apply Cert Manager resources manifest (Resources)
       kubernetes.core.k8s:
