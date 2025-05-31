@@ -54,7 +54,7 @@
       shell: |
         kubectl wait --namespace argocd \
           --for=condition=ready pod \
-          --selector=app.kubernetes.io/name=argocd-server \
+          --selector=app.kubernetes.io/name=argocd-repo-server \
           --timeout=300s
 
     - name: Apply Argo CD default application project (App Project)
