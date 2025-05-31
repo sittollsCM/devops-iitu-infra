@@ -9,4 +9,4 @@ controller:
     name: nginx
     default: true
   admissionWebhooks:
-    enabled: false
+    enabled: true
