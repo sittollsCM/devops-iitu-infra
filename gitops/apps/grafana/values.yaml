@@ -1,6 +1,5 @@
-admin:
-  user: admin
-  password: admin123
+adminUser: admin
+adminPassword: admin123
 
 service:
   type: ClusterIP

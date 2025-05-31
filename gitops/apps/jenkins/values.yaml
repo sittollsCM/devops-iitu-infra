@@ -1,6 +1,8 @@
 controller:
-  adminUser: admin
-  adminPassword: admin123
+  admin:
+    username: "admin"
+    password: "admin123"
+    
   serviceType: NodePort
   servicePort: 8080
   nodePort: 30080

@@ -1,7 +1,6 @@
-auth:
-  username: mluser
-  password: mlpass
-  database: mldb
+postgresqlUsername: mluser
+postgresqlPassword: mlpass
+postgresqlDatabase: mldb
 
 primary:
   persistence:
